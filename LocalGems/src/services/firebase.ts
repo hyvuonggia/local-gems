@@ -300,6 +300,75 @@ class FirebaseService {
     
     return locations;
   }
+
+  /**
+   * Get all locations created by a specific user
+   */
+  static async getUserLocations(userId: string): Promise<Location[]> {
+    try {
+      const querySnapshot = await firestore()
+        .collection('locations')
+        .where('creatorId', '==', userId)
+        .get();
+      
+      return querySnapshot.docs.map(doc => ({
+        locationId: doc.id,
+        ...doc.data()
+      } as Location));
+    } catch (error) {
+      console.error('Error getting user locations:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get top users by points for leaderboard
+   */
+  static async getTopUsers(limit: number = 10): Promise<User[]> {
+    try {
+      const querySnapshot = await firestore()
+        .collection('users')
+        .orderBy('points', 'desc')
+        .limit(limit)
+        .get();
+      
+      return querySnapshot.docs.map(doc => ({
+        uid: doc.id,
+        ...doc.data()
+      } as User));
+    } catch (error) {
+      console.error('Error getting top users:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user's review count
+   */
+  static async getUserReviewCount(userId: string): Promise<number> {
+    try {
+      const locationsSnapshot = await firestore()
+        .collection('locations')
+        .get();
+      
+      let reviewCount = 0;
+      
+      for (const locationDoc of locationsSnapshot.docs) {
+        const reviewsSnapshot = await firestore()
+          .collection('locations')
+          .doc(locationDoc.id)
+          .collection('reviews')
+          .where('userId', '==', userId)
+          .get();
+        reviewCount += reviewsSnapshot.size;
+      }
+      
+      return reviewCount;
+    } catch (error) {
+      console.error('Error getting user review count:', error);
+      return 0;
+    }
+  }
 }
 
 export default new FirebaseService();
