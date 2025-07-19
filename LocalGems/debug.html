@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>React Native Web Test</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+        #root { width: 100%; height: 100vh; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div class="debug">
+        <h3>Debug Info</h3>
+        <p>HTML loaded successfully</p>
+        <p>Root element: <span id="root-status">checking...</span></p>
+        <p>React Native bundle: <span id="bundle-status">loading...</span></p>
+    </div>
+    
+    <div id="root">
+        <div class="debug">
+            <p>If you see this, the React Native app has not loaded yet.</p>
+            <p>The root div should be replaced by the React Native component.</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('HTML script running');
+        
+        // Check if root element exists
+        const root = document.getElementById('root');
+        document.getElementById('root-status').textContent = root ? 'Found' : 'Not found';
+        
+        // Log any errors
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript error:', e.error);
+            document.getElementById('bundle-status').textContent = 'Error: ' + e.message;
+        });
+        
+        console.log('Root element:', root);
+    </script>
+    
+    <script src="/index.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable" defer></script>
+    
+    <script>
+        // After bundle loads
+        setTimeout(() => {
+            document.getElementById('bundle-status').textContent = 'Loaded';
+            console.log('Bundle script tag processed');
+        }, 1000);
+    </script>
+</body>
+</html>

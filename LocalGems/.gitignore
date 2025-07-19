@@ -154,7 +154,8 @@ node_modules/
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
-web_modules/
+# Web build output will be generated
+# web/_modules/
 
 # TypeScript cache
 *.tsbuildinfo
